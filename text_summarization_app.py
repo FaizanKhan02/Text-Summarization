@@ -55,11 +55,17 @@ def preprocessText():
     if not text_data:
         output_text.delete('1.0', END)
         output_text.insert(END, "Error: No text to preprocess.\n")
+        preprocesslabel.config(text="Error: No text to preprocess.", fg='red')
         return
+    try:
         cleaned_text = cleanText(text_data)
         output_text.delete('1.0', END)
         output_text.insert(END, cleaned_text)
-    
+        preprocesslabel.config(text="Text preprocessed successfully.", fg='white')
+    except Exception as e:
+        output_text.delete('1.0', END)
+        output_text.insert(END, f"Error preprocessing text: {str(e)}\n")
+        preprocesslabel.config(text="Error during text preprocessing.", fg='red')
 def abstractiveSummary():
     if model is None or tokenizer is None:
         output_text.delete('1.0', END)
@@ -112,6 +118,10 @@ input_label.pack(pady=5)
 input_text = Text(main, height=13, width=120, font=font_text)
 input_text.pack(pady=10)
 
+# Preprocess Status Label
+preprocesslabel = Label(main, bg='Darkcyan', fg='white', font=font_label)
+preprocesslabel.pack(pady=5)
+
 # Buttons for preprocessing, summarization, and clearing text
 button_frame = Frame(main, bg='Darkcyan')
 button_frame.pack(pady=10)
@@ -124,6 +134,10 @@ summary_button.grid(row=0, column=1, padx=10)
 
 clear_button = Button(button_frame, text="Clear Text", command=clearText, font=font_label, cursor='hand2')
 clear_button.grid(row=0, column=2, padx=10)
+
+# Preprocess Status Label
+preprocesslabel = Label(main, bg='Darkcyan', fg='white', font=font_label)
+preprocesslabel.pack(pady=5)
 
 # Output Text Area
 output_label = Label(main, text='Output Summary:', bg='Darkcyan', fg='white', font=font_label)
